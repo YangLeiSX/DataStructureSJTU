@@ -1,2 +1,4 @@
 # DataStructureSJTU
-code of course CS149(data structure) in SJTU
+上海交通大学
+工科平台数据结构（非计算机类，大课）课程代码
+主要为课本代码+部分作业代码（原有代码的扩展）
