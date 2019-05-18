@@ -26,7 +26,7 @@
 		9500E45222804ABF00C9BB20 /* set.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = set.hpp; sourceTree = "<group>"; };
 		95507CA522125B9600A513F6 /* list.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = list.hpp; sourceTree = "<group>"; };
 		95507CAA2216706700A513F6 /* stack.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = stack.hpp; sourceTree = "<group>"; };
-		95AD369421ECCF4D00FA02CB /* Stest */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = Stest; sourceTree = BUILT_PRODUCTS_DIR; };
+		95AD369421ECCF4D00FA02CB /* DataStructure */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = DataStructure; sourceTree = BUILT_PRODUCTS_DIR; };
 		95AD369721ECCF4D00FA02CB /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		95CE4C93225300E1000CE158 /* queue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = queue.hpp; sourceTree = "<group>"; };
 		95CE4C9B2264B816000CE158 /* tree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tree.hpp; sourceTree = "<group>"; };
@@ -46,7 +46,7 @@
 		95AD368B21ECCF4D00FA02CB = {
 			isa = PBXGroup;
 			children = (
-				95AD369621ECCF4D00FA02CB /* Stest */,
+				95AD369621ECCF4D00FA02CB /* DataStructure */,
 				95AD369521ECCF4D00FA02CB /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,12 +54,12 @@
 		95AD369521ECCF4D00FA02CB /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				95AD369421ECCF4D00FA02CB /* Stest */,
+				95AD369421ECCF4D00FA02CB /* DataStructure */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		95AD369621ECCF4D00FA02CB /* Stest */ = {
+		95AD369621ECCF4D00FA02CB /* DataStructure */ = {
 			isa = PBXGroup;
 			children = (
 				95AD369721ECCF4D00FA02CB /* main.cpp */,
@@ -69,15 +69,15 @@
 				95507CA522125B9600A513F6 /* list.hpp */,
 				9500E45222804ABF00C9BB20 /* set.hpp */,
 			);
-			path = Stest;
+			path = DataStructure;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		95AD369321ECCF4D00FA02CB /* Stest */ = {
+		95AD369321ECCF4D00FA02CB /* DataStructure */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 95AD369B21ECCF4D00FA02CB /* Build configuration list for PBXNativeTarget "Stest" */;
+			buildConfigurationList = 95AD369B21ECCF4D00FA02CB /* Build configuration list for PBXNativeTarget "DataStructure" */;
 			buildPhases = (
 				95AD369021ECCF4D00FA02CB /* Sources */,
 				95AD369121ECCF4D00FA02CB /* Frameworks */,
@@ -87,9 +87,9 @@
 			);
 			dependencies = (
 			);
-			name = Stest;
+			name = DataStructure;
 			productName = Stest;
-			productReference = 95AD369421ECCF4D00FA02CB /* Stest */;
+			productReference = 95AD369421ECCF4D00FA02CB /* DataStructure */;
 			productType = "com.apple.product-type.tool";
 		};
 /* End PBXNativeTarget section */
@@ -106,7 +106,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 95AD368F21ECCF4D00FA02CB /* Build configuration list for PBXProject "Stest" */;
+			buildConfigurationList = 95AD368F21ECCF4D00FA02CB /* Build configuration list for PBXProject "DataStructure" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -118,7 +118,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				95AD369321ECCF4D00FA02CB /* Stest */,
+				95AD369321ECCF4D00FA02CB /* DataStructure */,
 			);
 		};
 /* End PBXProject section */
@@ -267,7 +267,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		95AD368F21ECCF4D00FA02CB /* Build configuration list for PBXProject "Stest" */ = {
+		95AD368F21ECCF4D00FA02CB /* Build configuration list for PBXProject "DataStructure" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95AD369921ECCF4D00FA02CB /* Debug */,
@@ -276,7 +276,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		95AD369B21ECCF4D00FA02CB /* Build configuration list for PBXNativeTarget "Stest" */ = {
+		95AD369B21ECCF4D00FA02CB /* Build configuration list for PBXNativeTarget "DataStructure" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				95AD369C21ECCF4D00FA02CB /* Debug */,
