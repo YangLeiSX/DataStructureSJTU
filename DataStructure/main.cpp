@@ -22,15 +22,8 @@
 #include <algorithm>
 #include <utility>
 
-#include "set.hpp"
+#include "review.h"
 
 int main(int argc, const char * argv[]) {
-    int size = 15;
-    node<int> *test = dataGen<int>(size);
-    std::cout << "origin data:\n";
-    printData(test);
-    mergeSort(test, 1, size);
-    std::cout << "after sort:\n";
-    printData(test);
     return 0;
 }
