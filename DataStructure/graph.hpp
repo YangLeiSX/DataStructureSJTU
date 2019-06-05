@@ -8,7 +8,7 @@
 
 #ifndef graph_hpp
 #define graph_hpp
-
+#include "set.hpp"
 #include "queue.hpp"
 /*
  *********************************************
@@ -125,17 +125,28 @@ template <class TypeOfVer, class TypeOfEdge>
 class adjListGraph:public graph<TypeOfVer, TypeOfEdge> {
 public:
     adjListGraph(int vSize,const TypeOfVer d[]);
+    //插入和删除有向边
     void insert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
     void remove(TypeOfVer x, TypeOfVer y);
     void remove(int x, int y);
+    //插入和删除一正一反两条有向边，表示无向图
+    void NDinsert(TypeOfVer x, TypeOfVer y, TypeOfEdge w);
+    void NDremove(TypeOfVer x, TypeOfVer y);
+    void NDremove(int x, int y);
     bool exist(TypeOfVer x, TypeOfVer y)const;
     ~adjListGraph();
     
     void dfs() const;//深度优先搜索
     void bfs()const;//广度优先搜索
     void EulerCircuit(TypeOfVer start);//欧拉回路
-    void topSort()const;
-    void criticalPath() const;
+    void topSort()const;//拓扑序列
+    void criticalPath() const;//关键路径
+    
+    void kruskal() const;//最小生成树kruskal算法
+    void prim(TypeOfEdge noEdge) const;//最小生成树prim算法
+    
+    void unweightedShortDistance(TypeOfVer start,TypeOfEdge noEdge) const;//无权图单源最短路径
+    void dijkstra(TypeOfVer start, TypeOfEdge noEdge) const;//dijkstra算法 加权图最短路径
     
 private:
     struct edgeNode{//储存边的结点
@@ -184,6 +195,24 @@ private:
     //欧拉回路辅助函数
     adjListGraph<TypeOfVer,TypeOfEdge>::verNode* clone()const;
     void EulerCircuit(int start, EulerNode *&beg,EulerNode *&en);
+    
+    //kruskal算法辅助结构
+    struct edge{
+        int beg,end;
+        TypeOfEdge w;
+        bool operator<(const edge &rp)const{
+            return w < rp.w;
+        }
+    };
+    //单源最短路径显示辅助函数
+    void printPath(int start, int end, int prev[]) const{
+        if(start == end){
+            std::cout << verList[start].ver;
+            return ;
+        }
+        printPath(start, prev[end], prev);
+        std::cout << "-" << verList[end].ver;
+    }
 };
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -219,6 +248,12 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::insert(TypeOfVer x, TypeOfVer y, TypeO
 }
 
 template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::NDinsert(TypeOfVer x, TypeOfVer y, TypeOfEdge w) {
+    insert(x, y, w);
+    insert(y, x, w);
+}
+
+template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
     int u = find(x), v = find(y);
     edgeNode *p = verList[u].head, *q;
@@ -243,6 +278,12 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::remove(TypeOfVer x, TypeOfVer y) {
 }
 
 template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::NDremove(TypeOfVer x, TypeOfVer y) {
+    remove(x, y);
+    remove(y, x);
+}
+
+template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer, TypeOfEdge>::remove(int x, int y) {
     int u = x, v = y;
     edgeNode *p = verList[u].head, *q;
@@ -264,6 +305,12 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::remove(int x, int y) {
         delete q;
         this->Edges --;
     }
+}
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::NDremove(int x, int y) {
+    remove(x, y);
+    remove(y, x);
 }
 
 template <class TypeOfVer, class TypeOfEdge>
@@ -463,7 +510,7 @@ void adjListGraph<TypeOfVer,TypeOfEdge>::topSort()const {
     }
     std::cout << std::endl;
 }
-/*有点bug 不输出任何信息
+/*有点bug 不输出任何信息 内存爆炸
  *//*
 template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {
@@ -522,4 +569,152 @@ void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {
     std::cout << std::endl;
 }
  */
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::kruskal()const {
+    int edgesAccepted = 0, u, v;
+    edgeNode *p;
+    edge e;
+    DisjointSet ds(this->Vers);
+    priorityQueue<edge> pq;
+    
+    
+    for(int i = 0; i< this->Vers;i++){
+        for(p = verList[i].head; p!= NULL; p = p->next)
+            if(i < p->end){
+                e.beg = i;
+                e.end = p->end;
+                e.w = p->weight;
+                pq.enQueue(e);
+            }
+    }
+    
+    while(edgesAccepted < this->Vers - 1){
+        e = pq.deQueue();
+        u = ds.Find(e.beg);
+        v = ds.Find(e.end);
+        if( u != v){
+            edgesAccepted ++;
+            ds.Union(u, v);
+            std::cout << "(" << verList[e.beg].ver << "," << verList[e.end].ver << ")\n";
+        }
+    }
+}
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::prim(TypeOfEdge noEdge)const {
+    bool *flag = new bool[this->Vers];
+    TypeOfEdge *lowCost = new TypeOfEdge[this->Vers];
+    int *startNode = new int[this->Vers];
+    
+    edgeNode *p;
+    TypeOfEdge min;
+    int start,i,j;
+    
+    for(i = 0;i < this->Vers;i++){
+        flag[i] = false;
+        lowCost[i] = noEdge;
+    }
+    
+    start = 0;
+    for(i = 1;i < this->Vers;i++){
+        for(p = verList[start].head; p != NULL; p = p->next)
+            if(!flag[p->end] && lowCost[p->end] > p->weight){
+                lowCost[p->end] = p->weight;
+                startNode[p->end] = start;
+            }
+        flag[start] = true;
+        min = noEdge;
+        for(j = 0; j < this->Vers;j++)
+            if(lowCost[j] < min){
+                min = lowCost[j];
+                start = j;
+            }
+        std::cout << "(" << verList[startNode[start]].ver << "," << verList[start].ver << ")\n";
+        lowCost[start] = noEdge;
+    }
+    
+    delete [] flag;
+    delete [] startNode;
+    delete [] lowCost;
+}
+
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::unweightedShortDistance(TypeOfVer start, TypeOfEdge noEdge)const {
+    linkQueue<int> q;
+    TypeOfEdge *distance = new TypeOfEdge[this->Vers];
+    int *prev = new int[this->Vers];
+    int u,sNo;
+    edgeNode *p;
+    
+    for(int i = 0; i < this->Vers;i++){
+        distance[i] = noEdge;
+    }
+    
+    sNo = find(start);
+    
+    distance[sNo] = 0;
+    prev[sNo] = sNo;
+    q.enQueue(sNo);
+    
+    while(!q.isEmpty()){
+        u = q.deQueue();
+        for(p = verList[u].head;p != NULL;p=p->next)
+            if(distance[p->end] == noEdge){
+                distance[p->end] = distance[u]+1;
+                prev[p->end] = u;
+                q.enQueue(p->end);
+            }
+    }
+    
+    for(int i = 0;i < this->Vers ;i++){
+        std::cout << "path from " << start << " to " << verList[i].ver << " is :\t" << std::endl;
+        printPath(sNo, i, prev);
+        std::cout << "\n";
+    }
+}
+
+template <class TypeOfVer, class TypeOfEdge>
+void adjListGraph<TypeOfVer, TypeOfEdge>::dijkstra(TypeOfVer start, TypeOfEdge noEdge)const {
+    TypeOfEdge *distance = new TypeOfEdge[this->Vers];
+    int *prev = new int[this->Vers];
+    bool *known = new bool[this->Vers];
+    
+    int u = 0,sNo,i,j;
+    edgeNode *p;
+    TypeOfEdge min;
+    
+    for(i = 0; i< this->Vers;i++){
+        known[i] = false;
+        distance[i] = noEdge;
+    }
+    
+    sNo = find(start);
+    distance[sNo] = 0;
+    prev[sNo] = sNo;
+    
+    for(i = 1;i < this->Vers;i++){
+        min = noEdge;
+        for(j = 0;j < this->Vers;j++){
+            if(!known[j] && distance[j] < min){
+                min = distance[j];
+                u = j;
+            }
+        }
+        
+        known[u] = true;
+        for(p = verList[u].head ; p!= NULL; p=p->next)
+            if(!known[p->end] && distance[p->end] > min + p->weight){
+                distance[p->end] = min + p->weight;
+                prev[p->end] = u;
+            }
+    }
+    
+    for(i = 0 ; i< this->Vers;i++){
+        std::cout << "path from " << start << " to " << verList[i].ver << " is:\n";
+        printPath(sNo, i, prev);
+        std::cout << "\t and the length is: " << distance[i] << std::endl;
+    }
+}
 #endif /* graph_hpp */

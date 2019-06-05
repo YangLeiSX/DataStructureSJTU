@@ -128,4 +128,119 @@ Queue<type>::~Queue() {
     //删除尾节点
     delete rear;
 }
+
+/*
+ ***********************************************
+ 无头节点单链表实现的整数的保存
+ 要求：第一个节点保存最低位
+ 请实现输出函数
+ ***********************************************
+ */
+class ListInt{
+private:
+    struct intNode{
+        int data;
+        intNode *next;
+        
+        intNode(){data = 0;next = NULL;}
+        intNode(int d,intNode *n = NULL){
+            data = d;
+            next = n;
+        }
+    };
+    intNode *head;
+    
+    void print(intNode *n)const;
+    
+public:
+    ListInt(int num);
+    ~ListInt();
+    void print()const;
+};
+
+ListInt::ListInt(int num){
+    head = new intNode();
+    intNode *tmp = head;
+    
+    while(num > 0){
+        tmp->data = num % 10;
+        if(num > 10)
+            tmp = tmp->next = new intNode();
+        num /= 10;
+    }
+}
+
+ListInt::~ListInt(){
+    intNode *tmp;
+    while(head != NULL){
+        tmp = head;
+        head = head->next;
+        delete tmp;
+    }
+}
+
+void ListInt::print()const{
+    print(head);
+}
+
+void ListInt::print(intNode *n)const{
+    if(n->next == NULL){
+        std::cout << n->data;
+        return ;
+    }
+    print(n->next);
+    std::cout << n->data;
+    return ;
+}
+
+
+/*
+ ***********************************************
+ 判断一个二叉树是不是AVL树
+ 要求：参数为根节点，返回值为bool类型
+ 请实现该函数
+ ***********************************************
+ */
+#include "set.hpp"
+
+template <class KEY, class OTHER>
+bool binarySearchTree<KEY,OTHER>::isAVL()const {//包裹函数
+    return isAVL(root);
+}
+
+template <class KEY, class OTHER>
+bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
+    
+    int hl = 0,hr = 0;//储存高度
+    binaryNode *l = t->left, *r = t->right;//左右子树
+    
+    //特殊情况的考虑
+    if(t == NULL)
+        return true;
+    
+    if(l == NULL && r == NULL)
+        return true;//叶子结点
+    
+    //得到子树高度
+    while(l != NULL){//左子树的高度
+        hl ++;
+        l = (l->left == NULL)? l->right : l->left;
+    }
+    while(r != NULL){//右子树的高度
+        hr ++;
+        r = (r->left == NULL)? r->right : r->left;
+    }
+    
+    //比较子树高度
+    if(abs(hl - hr) > 1)
+        return false;//不满足定义
+    
+    if(!isAVL(t->left))
+        return false;//左子树不满足定义
+    
+    if(!isAVL(t->right))
+        return false;//右子树不满足定义
+    
+    return true;
+}
 #endif /* review_h */

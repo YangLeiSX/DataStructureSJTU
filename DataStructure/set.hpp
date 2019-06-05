@@ -164,6 +164,7 @@ public:
     void NRinsert(const SET<KEY,OTHER> &x);
     void NRremove(const KEY &x);
     
+    bool isAVL()const;    
 private:
     void insert(const SET<KEY,OTHER> &x,binaryNode* &t);
     void remove(const KEY &x,binaryNode* &t);
@@ -177,6 +178,7 @@ private:
     void NRinsert(const SET<KEY,OTHER> &x,binaryNode* &t);
     void NRremove(const KEY &x,binaryNode* &t);
     
+    bool isAVL(const binaryNode *t)const;
 };
 //基本操作的实现
 template <class KEY,class OTHER >
@@ -1185,5 +1187,49 @@ void merge(node<OTHER> *&root, int left, int mid, int right) {
         }
     }
     
+}
+
+/*
+ *********************************************
+ 使用数组实现的不相交集
+ *********************************************
+ */
+class DisjointSet{
+private:
+    int size;//数组的规模
+    int *parent;
+    
+public:
+    DisjointSet(int n);
+    ~DisjointSet(){delete [] parent;}
+    void Union(int root1, int root2);
+    int Find(int x);
+};
+
+DisjointSet::DisjointSet(int n){
+    size = n;
+    parent = new int [size];
+    for(int i = 0; i < size;i++){
+        parent[i] = -1;//所有的都是规模为1的根节点
+    }
+}
+
+int DisjointSet::Find(int x){
+    if(parent[x] < 0)//找到根节点
+        return x;
+    //将路径上所有的点直接与根节点相连：路径压缩
+    return parent[x] = Find(parent[x]);
+}
+
+void DisjointSet::Union(int root1, int root2){
+    if(root1 == root2)
+        return ;
+    if(parent[root1] > parent[root2]){//root1规模比较小
+        parent[root2] += parent[root1];//root1归并到root2上
+        parent[root1] = root2;
+    }else{
+        parent[root1] += parent[root2];//root2归并到root1上
+        parent[root2] = root1;
+    }
 }
 #endif /* set_hpp */
