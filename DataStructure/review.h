@@ -222,6 +222,7 @@ bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
         return true;//叶子结点
     
     //得到子树高度
+    /*这几行不太严密,并不能得到正确的子树的高度*/
     while(l != NULL){//左子树的高度
         hl ++;
         l = (l->left == NULL)? l->right : l->left;

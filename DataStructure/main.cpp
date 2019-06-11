@@ -22,13 +22,9 @@
 #include <algorithm>
 #include <utility>
 
-#include "review.h"
+#include "graph.hpp"
 
 int main(int argc, const char * argv[]) {
-    binarySearchTree<int, int> t;
-    for(int i = 1;i <= 4;i++){
-        t.insert(SET<int,int>(i,i));
-    }
-    std::cout << t.isAVL();
+    
     return 0;
 }
