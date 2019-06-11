@@ -510,23 +510,26 @@ void adjListGraph<TypeOfVer,TypeOfEdge>::topSort()const {
     }
     std::cout << std::endl;
 }
-/*有点bug 不输出任何信息 内存爆炸
- *//*
+
 template <class TypeOfVer, class TypeOfEdge>
-void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {
-    TypeOfEdge *ee = new TypeOfEdge[this->Vers], *le = new TypeOfEdge[this->Vers];
-    int *top = new int[this->Vers], *inDegree = new int[this->Vers];
+void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {//关键路径问题
+    TypeOfEdge *ee = new TypeOfEdge[this->Vers];//ee储存最早时间
+    TypeOfEdge *le = new TypeOfEdge[this->Vers];//le储存最晚时间
+    int *top = new int[this->Vers];//储存拓扑序列
+    int *inDegree = new int[this->Vers];//储存入度
     linkQueue<int> q;
     int i;
     edgeNode *p;
     
-    
-    for(i = 0;i < this->Vers;i++){
+    //计算拓扑序列
+    for(i = 0;i < this->Vers;i++){//赋初值
+        top[i] = 0;
         inDegree[i] = 0;
-        for(p = verList[i].head; p != NULL; p = p->next)
-            ++inDegree[p->end];
     }
-    
+    for(i = 0;i < this->Vers;i++){
+        for(p = verList[i].head; p != NULL; p = p->next)
+            ++inDegree[p->end];//计算入度
+    }
     for(i = 0;i < this->Vers;i++){
         if(inDegree[i] == 0)
             q.enQueue(i);
@@ -534,33 +537,35 @@ void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {
     
     i = 0;
     while(!q.isEmpty()){
-        top[i] = q.deQueue();
+        top[i] = q.deQueue();//输出入度为0的
         for(p = verList[top[i]].head; p != NULL; p = p->next){
-            if(--inDegree[p->end] == 0)
+            if((--inDegree[p->end]) == 0)//删去对应的边（减小入度）
                 q.enQueue(p->end);
         }
         i++;
     }
     
-    for(i = 0; i<this->Vers;i++){
-        ee[i] = 0;
+    //计算最早时间
+    for(i = 0; i < this->Vers;i++){
+        ee[i] = 0;//赋初值
     }
-    for(i = 0; i< this->Vers;i++){
-        for(p = verList[top[i]].head;p != NULL ; p = p->next)
-            if(ee[p->end] < ee[top[i]] + p->weight)
+    for(i = 0; i < this->Vers;i++){
+        for(p = verList[top[i]].head; p != NULL ; p = p->next)
+            if(ee[p->end] < ee[top[i]] + p->weight)//更新目标节点的最早时间
                 ee[p->end] = ee[top[i]] + p->weight;
     }
     
-    
-    for(i = 0; i <this->Vers;i++){
-        le[i] = ee[this->Vers - i];
+    //计算最晚时间
+    for(i = 0; i < this->Vers;i++){
+        le[i] = ee[this->Vers - 1];//赋初值为最大时间
     }
-    for(i = this->Vers - 1; i >= 0;i--){
+    for(i = this->Vers - 1; i >= 0;i--){//按拓扑序列逆序更新时间
         for(p = verList[top[i]].head; p!= NULL; p = p->next)
             if(le[p->end] - p->weight < le[top[i]])
                 le[top[i]] = le[p->end] - p->weight;
     }
     
+    //输出关键路径
     for(i = 0; i < this->Vers;i++){
         if(le[top[i]] == ee[top[i]])
             std::cout << "(" << verList[top[i]].ver << "," << ee[top[i]] << ")";
@@ -568,7 +573,6 @@ void adjListGraph<TypeOfVer,TypeOfEdge>::criticalPath()const {
     
     std::cout << std::endl;
 }
- */
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer, TypeOfEdge>::kruskal()const {
