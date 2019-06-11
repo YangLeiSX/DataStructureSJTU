@@ -645,33 +645,35 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::prim(TypeOfEdge noEdge)const {
 
 
 template <class TypeOfVer, class TypeOfEdge>
-void adjListGraph<TypeOfVer, TypeOfEdge>::unweightedShortDistance(TypeOfVer start, TypeOfEdge noEdge)const {
+void adjListGraph<TypeOfVer, TypeOfEdge>::unweightedShortDistance(TypeOfVer start, TypeOfEdge noEdge)const {//使用广度优先搜索的思路得到无权图的最短路径
     linkQueue<int> q;
-    TypeOfEdge *distance = new TypeOfEdge[this->Vers];
-    int *prev = new int[this->Vers];
+    TypeOfEdge *distance = new TypeOfEdge[this->Vers];//储存距离的值
+    int *prev = new int[this->Vers];//保存上一个节点
     int u,sNo;
     edgeNode *p;
     
     for(int i = 0; i < this->Vers;i++){
-        distance[i] = noEdge;
+        distance[i] = noEdge;//设置所有的距离都为最大值
     }
     
     sNo = find(start);
     
-    distance[sNo] = 0;
+    distance[sNo] = 0;//到自己的距离为0
     prev[sNo] = sNo;
     q.enQueue(sNo);
     
     while(!q.isEmpty()){
         u = q.deQueue();
         for(p = verList[u].head;p != NULL;p=p->next)
+            //若从u可以到达的节点的距离尚未确定
             if(distance[p->end] == noEdge){
-                distance[p->end] = distance[u]+1;
-                prev[p->end] = u;
+                distance[p->end] = distance[u]+1;//确定其距离
+                prev[p->end] = u;//记录上一个节点
                 q.enQueue(p->end);
             }
     }
     
+    //输出最短路径
     for(int i = 0;i < this->Vers ;i++){
         std::cout << "path from " << start << " to " << verList[i].ver << " is :\t" << std::endl;
         printPath(sNo, i, prev);
@@ -681,14 +683,16 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::unweightedShortDistance(TypeOfVer star
 
 template <class TypeOfVer, class TypeOfEdge>
 void adjListGraph<TypeOfVer, TypeOfEdge>::dijkstra(TypeOfVer start, TypeOfEdge noEdge)const {
-    TypeOfEdge *distance = new TypeOfEdge[this->Vers];
-    int *prev = new int[this->Vers];
-    bool *known = new bool[this->Vers];
+    //采用贪婪法，每次确定一个节点的最短路径长度，同时更新其连接的节点的路径长度
+    TypeOfEdge *distance = new TypeOfEdge[this->Vers];//保存最短路径长度
+    int *prev = new int[this->Vers];//保存上一节点（最优的）
+    bool *known = new bool[this->Vers];//区分哪些节点的路径已经确定
     
     int u = 0,sNo,i,j;
     edgeNode *p;
     TypeOfEdge min;
     
+    //赋初值
     for(i = 0; i< this->Vers;i++){
         known[i] = false;
         distance[i] = noEdge;
@@ -698,23 +702,25 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::dijkstra(TypeOfVer start, TypeOfEdge n
     distance[sNo] = 0;
     prev[sNo] = sNo;
     
+    //确定最短路径
     for(i = 1;i < this->Vers;i++){
         min = noEdge;
         for(j = 0;j < this->Vers;j++){
-            if(!known[j] && distance[j] < min){
+            if(!known[j] && distance[j] < min){//寻找已知的节点中最近的
                 min = distance[j];
                 u = j;
             }
         }
         
         known[u] = true;
-        for(p = verList[u].head ; p!= NULL; p=p->next)
+        for(p = verList[u].head ; p!= NULL; p=p->next)//找到与该节点相连的节点
             if(!known[p->end] && distance[p->end] > min + p->weight){
-                distance[p->end] = min + p->weight;
-                prev[p->end] = u;
+                distance[p->end] = min + p->weight;//更新节点的路径长度
+                prev[p->end] = u;//更新节点的上一节点信息（与路径相关联）
             }
     }
     
+    //打印最短路径信息
     for(i = 0 ; i< this->Vers;i++){
         std::cout << "path from " << start << " to " << verList[i].ver << " is:\n";
         printPath(sNo, i, prev);
