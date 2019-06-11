@@ -43,6 +43,8 @@ public:
     bool exist(TypeOfVer x, TypeOfVer y) const ;
     ~adjMatrixGraph();
     
+    void floyd() const;//floyd算法 最短路径问题
+    
 private:
     TypeOfEdge **edge; // 邻接矩阵
     TypeOfVer *ver;
@@ -78,7 +80,7 @@ adjMatrixGraph<TypeOfVer, TypeOfEdge>::adjMatrixGraph(int vSize, const TypeOfVer
         for(j = 0; j < vSize;j++){
             edge[i][j] = noEdge;
         }
-        edge[i][j] = 0;
+        edge[i][i] = 0;
     }
 }
 
@@ -114,6 +116,48 @@ bool adjMatrixGraph<TypeOfVer, TypeOfEdge>::exist(TypeOfVer x, TypeOfVer y)const
         return true;
 }
 
+template <class TypeOfVer, class TypeOfEdge>
+void adjMatrixGraph<TypeOfVer, TypeOfEdge>::floyd()const {
+    //floyd算法，计算所有顶点对的最短路径，通过邻接矩阵的迭代得到
+    //要求noEdgeFlag为一个较大的整数
+    TypeOfEdge **d = new TypeOfEdge*[this->Vers];//保存路径长度的二维矩阵
+    int **prev = new int*[this->Vers];//保存上一节点的二维矩阵
+    int i,j,k;
+    
+    //初始化
+    for(i = 0;i < this->Vers;i++){
+        d[i] = new TypeOfEdge[this->Vers];
+        prev[i] = new int[this->Vers];
+        for(j = 0;j < this->Vers;j++){
+            d[i][j] = edge[i][j];//初始化为邻接矩阵
+            prev[i][j] = (edge[i][j] != noEdge)? i : -1;//-1表示不可达
+        }
+    }
+    
+    //k次迭代
+    for(k = 0;k < this->Vers;k++)
+        for(i = 0;i < this->Vers;i++)//处理每一行
+            for(j = 0;j < this->Vers;j++)//处理每个节点
+                if(d[i][k]+d[k][j] < d[i][j]){
+                    d[i][j] = d[i][k] + d[k][j];
+                    prev[i][j] = prev[k][j];
+                }
+    
+    //显示迭代结果
+    std::cout << "\npath length is:\n";
+    for(i = 0;i < this->Vers;i++){
+        std::cout << std::endl;
+        for(j = 0;j < this->Vers;j++)
+            std::cout << d[i][j] << "\t";
+    }
+    
+    std::cout << "\npath is:\n";
+    for(i = 0;i < this->Vers;i++){
+        std::cout << std::endl;
+        for(j = 0;j < this->Vers;j++)
+            std::cout << prev[i][j] << "\t";
+    }
+}
 
 /*
  *********************************************
