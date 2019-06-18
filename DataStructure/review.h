@@ -244,4 +244,56 @@ bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
     
     return true;
 }
+
+
+/*
+ ***********************************************
+ 通过前序遍历和中序遍历确定二叉树和后序遍历
+ 要求：输入字符串得到前序遍历和中序遍历
+ 请实现该函数
+ ***********************************************
+ */
+const int MAX = 100;
+typedef struct Nodex{
+    char data;
+    struct Nodex *left, *right;
+} BinNode;
+
+BinNode *builtBinTree(char *ppos, char *ipos, int n){
+    BinNode *ptr = new BinNode;
+    char *pos;
+    int k;
+    if(n <= 0) return NULL;
+    ptr->data = *ppos;
+    for(pos = ipos; pos < ipos+n; pos++){
+        if(*pos == *ppos)
+            break;
+    }
+    k = int(pos - ipos);
+    ptr->left = builtBinTree(ppos+1, ipos, k);
+    ptr->right = builtBinTree(ppos+k+1, pos+1, n-1-k);
+    return ptr;
+}
+
+void postOrder(BinNode *ptr){
+    if(ptr == NULL)
+        return ;
+    postOrder(ptr->left);
+    postOrder(ptr->right);
+    std::cout << ptr->data;
+}
+
+void getPostOrderFromPI(){
+    BinNode *root;
+    char preSeq[MAX], inSeq[MAX];
+    std::cout << "presequence:\t";
+    std::cin >> preSeq;
+    std::cout << "insequence:\t";
+    std::cin >> inSeq;
+    
+    root = builtBinTree(preSeq, inSeq, int(strlen(preSeq)));
+    std::cout << "post sequence:\t";
+    postOrder(root);
+    std::cout << "\n";
+}
 #endif /* review_h */

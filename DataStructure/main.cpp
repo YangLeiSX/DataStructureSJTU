@@ -22,9 +22,9 @@
 #include <algorithm>
 #include <utility>
 
-#include "graph.hpp"
+#include "review.h"
 
 int main(int argc, const char * argv[]) {
-    
+    getPostOrderFromPI();
     return 0;
 }
