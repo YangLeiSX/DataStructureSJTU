@@ -179,6 +179,7 @@ private:
     void NRremove(const KEY &x,binaryNode* &t);
     
     bool isAVL(const binaryNode *t)const;
+    int height(const binaryNode *t)const;
 };
 //基本操作的实现
 template <class KEY,class OTHER >

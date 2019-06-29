@@ -25,6 +25,6 @@
 #include "review.h"
 
 int main(int argc, const char * argv[]) {
-    getPostOrderFromPI();
+    
     return 0;
 }

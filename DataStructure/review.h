@@ -209,9 +209,15 @@ bool binarySearchTree<KEY,OTHER>::isAVL()const {//包裹函数
 }
 
 template <class KEY, class OTHER>
+int binarySearchTree<KEY, OTHER>::height(const binaryNode *t)const {
+    if(t == NULL) return 0;
+    return 1 + (height(t->left) > height(t->right) ? height(t->left) : height(t->right));
+}
+
+template <class KEY, class OTHER>
 bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
     
-    int hl = 0,hr = 0;//储存高度
+    int hl = height(t->left),hr = height(t->right);//储存高度
     binaryNode *l = t->left, *r = t->right;//左右子树
     
     //特殊情况的考虑
@@ -220,17 +226,6 @@ bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
     
     if(l == NULL && r == NULL)
         return true;//叶子结点
-    
-    //得到子树高度
-    /*这几行不太严密,并不能得到正确的子树的高度*/
-    while(l != NULL){//左子树的高度
-        hl ++;
-        l = (l->left == NULL)? l->right : l->left;
-    }
-    while(r != NULL){//右子树的高度
-        hr ++;
-        r = (r->left == NULL)? r->right : r->left;
-    }
     
     //比较子树高度
     if(abs(hl - hr) > 1)
@@ -254,6 +249,7 @@ bool binarySearchTree<KEY,OTHER>::isAVL(const binaryNode *t)const {
  ***********************************************
  */
 const int MAX = 100;
+//C语言风格的定义
 typedef struct Nodex{
     char data;
     struct Nodex *left, *right;
@@ -264,18 +260,22 @@ BinNode *builtBinTree(char *ppos, char *ipos, int n){
     char *pos;
     int k;
     if(n <= 0) return NULL;
+    //根结点为前序遍历的第一个值
     ptr->data = *ppos;
+    //在中序遍历中搜索根结点
     for(pos = ipos; pos < ipos+n; pos++){
         if(*pos == *ppos)
             break;
     }
+    //确定根结点的下标，得到子树的规模
     k = int(pos - ipos);
+    //递归调用
     ptr->left = builtBinTree(ppos+1, ipos, k);
     ptr->right = builtBinTree(ppos+k+1, pos+1, n-1-k);
     return ptr;
 }
 
-void postOrder(BinNode *ptr){
+void postOrder(BinNode *ptr){//后序遍历输出
     if(ptr == NULL)
         return ;
     postOrder(ptr->left);
@@ -286,12 +286,14 @@ void postOrder(BinNode *ptr){
 void getPostOrderFromPI(){
     BinNode *root;
     char preSeq[MAX], inSeq[MAX];
+    //获得前序遍历和中序遍历
     std::cout << "presequence:\t";
     std::cin >> preSeq;
     std::cout << "insequence:\t";
     std::cin >> inSeq;
-    
+    //建立二叉树
     root = builtBinTree(preSeq, inSeq, int(strlen(preSeq)));
+    //结果输出
     std::cout << "post sequence:\t";
     postOrder(root);
     std::cout << "\n";
