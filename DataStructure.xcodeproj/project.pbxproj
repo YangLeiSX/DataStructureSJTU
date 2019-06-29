@@ -33,6 +33,7 @@
 		95CE4C93225300E1000CE158 /* queue.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = queue.hpp; sourceTree = "<group>"; };
 		95CE4C9B2264B816000CE158 /* tree.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = tree.hpp; sourceTree = "<group>"; };
 		95EA30A822C70E9F002DFDBA /* string.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = string.hpp; sourceTree = "<group>"; };
+		95EA30B022C75161002DFDBA /* sort.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = sort.hpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +72,7 @@
 				95CE4C9B2264B816000CE158 /* tree.hpp */,
 				95CE4C93225300E1000CE158 /* queue.hpp */,
 				95507CAA2216706700A513F6 /* stack.hpp */,
+				95EA30B022C75161002DFDBA /* sort.hpp */,
 				95507CA522125B9600A513F6 /* list.hpp */,
 				9500E45222804ABF00C9BB20 /* set.hpp */,
 				959F4C5B22A0DDB200D731A6 /* graph.hpp */,
