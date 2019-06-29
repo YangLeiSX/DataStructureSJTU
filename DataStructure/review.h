@@ -1,8 +1,7 @@
 //
 //  review.h
-//  DataStructure
+//  数据结构学习 复习题
 //
-//  部分期末复习题的代码实现
 //  Created by 杨磊 on 2019/5/26.
 //  Copyright © 2019 杨磊. All rights reserved.
 //
