@@ -932,194 +932,139 @@ void RedBlackTree<KEY, OTHER>::removeAdjust(RedBlackNode *&p, RedBlackNode *&c, 
 }
 
 
-
 /*
  *********************************************
- 使用线性探测法的闭散列表
+ 使用AA树实现的动态查找表
  *********************************************
  */
-template <class KEY,class OTHER>
-class closeHashTable:public dynamicSearchTable<KEY, OTHER> {
-private:
-    struct Node{
+template <class KEY, class OTHER>
+class AATree:public dynamicSearchTable<KEY, OTHER> {
+    struct AANode{
         SET<KEY, OTHER> data;
-        int state;
+        AANode *left;
+        AANode *right;
+        int level;
         
-        Node(){state = 0;}
+        AANode(const SET<KEY, OTHER> &x, AANode *lt, AANode *rt, int lv = 1):data{x},left(lt),right(rt),level(lv){}
     };
-    Node *array;
-    int size;
-    int (*key)(const KEY &x);
-    static int defaultKey(const int &x){return x;}
+    AANode *root;
     
 public:
-    closeHashTable(int length = 101,int (*f)(const KEY &x) = defaultKey);
-    ~closeHashTable(){delete [] array;}
+    AATree(){root = NULL;}
+    ~AATree(){makeEmpty(root);}
     SET<KEY, OTHER> *find(const KEY &x)const;
-    void insert(const SET<KEY,OTHER> &x);
-    void remove(const KEY &x);
+    void insert(const SET<KEY, OTHER> &x){insert(x, root);}
+    void remove(const KEY &x){remove(x, root);}
     
-};
-
-template <class KEY,class OTHER>
-closeHashTable<KEY, OTHER>::closeHashTable(int length,int (*f)(const KEY &x)) {
-    size = length;
-    array = new Node[length];
-    key = f;
-}
-
-template <class KEY,class OTHER>
-void closeHashTable<KEY, OTHER>::insert(const SET<KEY, OTHER> &x) {
-    int initPos,pos;
-    initPos = pos = key(x.key) % size;
-    do{
-        if(array[pos].state != 1){
-            array[pos].data = x;
-            array[pos].state = 1;
-            return ;
-        }
-        pos = (pos + 1) % size;
-    }while(pos != initPos);
-}
-
-template <class KEY,class OTHER>
-void closeHashTable<KEY,OTHER>::remove(const KEY &x) {
-    int initPos,pos;
-    
-    initPos = pos = key(x) % size;
-    do{
-        if(array[pos].state == 0){
-            return ;
-        }
-        if(array[pos].state == 1 && array[pos].data.key == x){
-            array[pos].state = 2;
-            return ;
-        }
-        pos = (pos + 1) % size;
-    }while(pos != initPos);
-}
-
-template <class KEY,class OTHER>
-SET<KEY,OTHER>* closeHashTable<KEY,OTHER>::find(const KEY &x)const {
-    int initPos,pos;
-    
-    initPos = pos = key(x) % size;
-    do{
-        if(array[pos].state == 0)
-            return NULL;
-        if(array[pos].state == 1 && array[pos].data.key == x)
-            return (SET<KEY, OTHER> *) &array[pos];
-        pos = (pos + 1) % size;
-    }while(pos != initPos);
-    return NULL;
-}
-
-/*
- *********************************************
- 使用单链表的开散列表
- *********************************************
- */
-template <class KEY,class OTHER>
-class openHashTable:public dynamicSearchTable<KEY, OTHER> {
 private:
-    struct Node{
-        SET<KEY,OTHER> data;
-        Node *next;
-        
-        Node(const SET<KEY,OTHER> &d,Node *n = NULL){
-            data = d;
-            next = n;
-        }
-        Node(){
-            next = NULL;
-        }
-    };
-    
-    Node **array;
-    int size;
-    int (*key)(const KEY &x);
-    static int defaultKey(const int &x){return x;}
-    
-public:
-    openHashTable(int length = 101,int(*f)(const KEY &x) = defaultKey);
-    ~openHashTable();
-    SET<KEY, OTHER>* find(const KEY &x)const;
-    void insert(const SET<KEY, OTHER> &x);
-    void remove(const KEY &x);
+    void insert(const SET<KEY, OTHER> &x,AANode *&t);
+    void remove(const KEY &x, AANode *&t);
+    void makeEmpty(AANode *&t);
+    void LL(AANode *&t);
+    void RR(AANode *&t);
+    int min(int a, int b){return a < b ? a : b;}
 };
 
-template <class KEY,class OTHER>
-openHashTable<KEY, OTHER>::openHashTable(int length,int (*f)(const KEY &x)) {
-    size = length;
-    array = new Node*[size];
-    key = f;
-    for(int i = 0; i < size;i++){
-        array[i] = NULL;
-    }
-}
-
-template <class KEY,class OTHER>
-openHashTable<KEY, OTHER>::~openHashTable() {
-    Node *q,*p;
-    
-    for(int i = 0;i < size;i++){
-        p = array[i];
-        while(p != NULL){
-            q = p->next;
-            delete p;
-            p = q;
-        }
-    }
-    delete [] array;
-}
-
-template <class KEY,class OTHER>
-void openHashTable<KEY,OTHER>::insert(const SET<KEY, OTHER> &x) {
-    int pos;
-    
-    pos = key(x.key) % size;
-    array[pos] = new Node(x,array[pos]);
-}
-
-template <class KEY,class OTHER>
-void openHashTable<KEY,OTHER>::remove(const KEY &x) {
-    int pos;
-    Node *p,*q;
-    
-    pos = key(x) % size;
-    if(array[pos] == NULL)
-        return ;
-    p = array[pos];
-    if(array[pos]->data.key == x){
-        array[pos] = p->next;
-        delete p;
-        return ;
-    }
-    
-    while(p->next != NULL && !(p->next->data.key == x))
-        p = p->next;
-    if(p->next != NULL){
-        q = p->next;
-        p->next = q->next;
-        delete q;
-    }
-}
-
-template <class KEY,class OTHER>
-SET<KEY,OTHER> *openHashTable<KEY,OTHER>::find(const KEY &x)const {
-    int pos;
-    Node *p;
-    
-    pos = key(x) % size;
-    p = array[pos];
-    while(p != NULL && !(p->data.key == x))
-        p = p->next;
-    if(p == NULL)
+template <class KEY, class OTHER>
+SET<KEY, OTHER> *AATree<KEY, OTHER>::find(const KEY &x)const {
+    AANode *t = root;
+    while( t != NULL && t->data.key != x)
+        if(t->data.key > x)
+            t = t->left;
+        else
+            t = t->right;
+    if(t == NULL)
         return NULL;
     else
-        return (SET<KEY,OTHER> *) p;
+        return (SET<KEY, OTHER> *)t;
 }
 
+template <class KEY, class OTHER>
+void AATree<KEY, OTHER>::makeEmpty(AANode *&t) {
+    if(t != NULL){
+        makeEmpty(t->left);
+        makeEmpty(t->right);
+        delete t;
+    }
+}
+
+//辅助函数
+template <class KEY, class OTHER>
+void AATree<KEY, OTHER>::LL(AANode *&t) {
+    if(t->left != NULL && t->left->level == t->level){
+        AANode *tmp = t->left;
+        t->left = tmp->right;
+        tmp->right = t;
+        t = tmp;
+    }
+}
+
+template <class KEY, class OTHER>
+void AATree<KEY, OTHER>::RR(AANode *&t) {
+    if(t->right != NULL && t->right->right != NULL && t->right->right->level == t->level){
+        AANode *tmp = t->right;
+        t->right = tmp->left;
+        tmp->left = t;
+        t = tmp;
+        t->level ++;
+    }
+}
+
+//插入操作
+template <class KEY, class OTHER>
+void AATree<KEY, OTHER>::insert(const SET<KEY, OTHER> &x, AANode *&t) {
+    if(t == NULL)
+        t = new AANode(x, NULL, NULL);
+    else if(x.key < t->data.key )
+        insert(x, t->left);
+    else if(t->data.key < x.key)
+        insert(x, t->right);
+    else
+        return ;
+    
+    LL(t);
+    RR(t);
+}
+
+//删除操作
+template <class KEY, class OTHER>
+void AATree<KEY, OTHER>::remove(const KEY &x, AANode *&t) {
+    if(t == NULL)
+        return ;
+    if(x < t->data.key)
+        remove(x, t->left);
+    else if(t->data < x)
+        remove(x, t->right);
+    else if(t->left != NULL && t->right != NULL){
+        AANode *tmp = t->right;
+        while(tmp->left != NULL)
+            tmp = tmp -> left;
+        t->data = tmp->data;
+        remove(t->data.key, t->right);
+    }
+    else{
+        AANode *oldNode = t;
+        t = (t -> left != NULL)? t->left : t->right;
+        delete oldNode;
+        return ;
+    }
+    
+    //修改节点层次
+    if(t ->left == NULL || t->right == NULL)
+        t->level = 1;
+    else
+        t->level = min(t->left->level, t->right->level) + 1;
+    if(t->right != NULL && t->right->level > t->level)
+        t->right->level = t->level;
+    LL(t);
+    if(t->right != NULL)
+        LL(t->right);
+    if(t->right != NULL && t->right->right != NULL)
+        LL(t->right->right);
+    RR(t);
+    if(t->right != NULL )
+        RR(t->right);
+}
 
 /*
  *********************************************
