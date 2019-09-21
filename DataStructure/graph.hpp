@@ -447,7 +447,7 @@ void adjListGraph<TypeOfVer, TypeOfEdge>::EulerCircuit(TypeOfVer start) {
         std::cout << "No Euler Circuit!\n";
         return ;
     }
-    for(i = 0; i < this->Vers;i++){
+    for(i = 0; i < this->Vers;i++){//检查是否为欧拉图
         numOfDegree = 0;
         r = verList[i].head;
         while(r != 0){

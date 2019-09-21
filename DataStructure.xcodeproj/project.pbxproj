@@ -116,7 +116,7 @@
 		95AD368C21ECCF4D00FA02CB /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = "杨磊";
 				TargetAttributes = {
 					95AD369321ECCF4D00FA02CB = {
@@ -268,6 +268,7 @@
 		95AD369C21ECCF4D00FA02CB /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8436NT4D2A;
 				FRAMEWORK_SEARCH_PATHS = "";
@@ -281,6 +282,7 @@
 		95AD369D21ECCF4D00FA02CB /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "-";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 8436NT4D2A;
 				FRAMEWORK_SEARCH_PATHS = "";

@@ -12,7 +12,7 @@
 #include <cstdlib>
 #include <ctime>
 
-#include "set.hpp"
+#include "graph.hpp"
 
 int main(int argc, const char * argv[]) {
     

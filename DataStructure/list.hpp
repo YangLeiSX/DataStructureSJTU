@@ -447,7 +447,7 @@ private:
         node(const elemType &x,node *p = NULL,node *n = NULL){
             data = x;prev = p;next = n;
         }
-        node():prev(NULL),next(NULL){}
+        node():data(NULL),prev(NULL),next(NULL){}
         ~node(){};
     };
     node * head;//头指针
@@ -466,12 +466,12 @@ public:
         iterator(const iterator &itr){//复制构造函数
             target = itr.target;
         }
-        iterator():target(NULL){};
+        iterator(node *n = NULL):target(n){};
         ~iterator(){};
         
         iterator &operator=(const int pos);//赋值
         iterator &operator=(const iterator &itr);//赋值
-        node & operator*() const ;//取值
+        elemType operator*() const ;//取值
         
         //++itr
         iterator &operator++();
@@ -507,9 +507,7 @@ typename dclinkList<elemType>::node* dclinkList<elemType>::move(int i)const {//�
 
 template <class elemType>
 dclinkList<elemType>::dclinkList() {//构造空表
-    head  = new node;
-    head->next = head;
-    head->prev = head;
+    head  = NULL;
     currentLength = 0;
 }
 
@@ -518,8 +516,8 @@ void dclinkList<elemType>::clear() {//清除数据
     node *p,*q;
     p = head->next;//存放所有数据
     
-    head->next = head;//构建空表
-    head->prev = head;
+    head = NULL;//构建空表
+   
     
     while(p != head){//遍历删除
         q = p->next;
@@ -532,13 +530,22 @@ void dclinkList<elemType>::clear() {//清除数据
 
 template <class elemType>
 void dclinkList<elemType>::insert(int i,const elemType &x) {//插入数据
+    if(currentLength == 0){
+        head = new node(x,NULL,NULL);
+        head->next = head;
+        head->prev = head;
+        currentLength ++;
+        return ;
+    }
     node *pos,*tmp;
     
     pos = move(i);
     tmp = new node(x,pos->prev,pos);
     pos->prev->next = tmp;
     pos->prev = tmp;
-    
+    if(i == 0){
+        head = tmp;
+    }
     currentLength ++ ;
 }
 
@@ -589,7 +596,7 @@ elemType dclinkList<elemType>::visit(int i)const {//读取数据
 
 template <class elemType>
 void  dclinkList<elemType>::traverse()const {//遍历数据
-    node *p = head->next;
+    node *p = head;
     std::cout << std::endl;
     while (p!= head) {
         std::cout << p->data << "\t";
@@ -598,6 +605,7 @@ void  dclinkList<elemType>::traverse()const {//遍历数据
     std::cout << std::endl;
 }
 
+//前置运算符 ++itr
 template<class elemType>
 typename dclinkList<elemType>::iterator & dclinkList<elemType>::iterator::operator++(){//后移
     this->target = this->target->next;
@@ -610,11 +618,12 @@ typename dclinkList<elemType>::iterator & dclinkList<elemType>::iterator::operat
     return *this;
 }
 
+//后置运算符 itr++
 template<class elemType>
 typename dclinkList<elemType>::iterator  dclinkList<elemType>::iterator::operator++(int){//后移
     dclinkList<elemType>::iterator tmp;
     tmp = *this;
-    ++*this;
+    this->target = this->target->next;
     return tmp;
 }
 
@@ -622,13 +631,13 @@ template<class elemType>
 typename dclinkList<elemType>::iterator  dclinkList<elemType>::iterator::operator--(int){//前移
     dclinkList<elemType>::iterator tmp;
     tmp = *this;
-    --*this;
+    this->target = this->target->prev;
     return tmp;
 }
 
 template<class elemType>
-typename dclinkList<elemType>::node &dclinkList<elemType>::iterator::operator*() const {//取值
-    return *(this->target);
+elemType dclinkList<elemType>::iterator::operator*() const {//取值
+    return this->target->data;
     
 }
 

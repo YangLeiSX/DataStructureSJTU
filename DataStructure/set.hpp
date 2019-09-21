@@ -761,6 +761,7 @@ void RedBlackTree<KEY, OTHER>::RL(RedBlackNode *gp) {
 }
 
 //插入过程
+//没有注意节点已经存在的情况
 template <class KEY, class OTHER>
 void RedBlackTree<KEY, OTHER>::insert(const SET<KEY, OTHER> &x) {
     RedBlackNode *t, *parent, *grandP;
@@ -796,9 +797,9 @@ void RedBlackTree<KEY, OTHER>::insert(const SET<KEY, OTHER> &x) {
 
 template <class KEY, class OTHER>
 void RedBlackTree<KEY, OTHER>::insertAdjust(RedBlackNode *gp, RedBlackNode *p, RedBlackNode *t) {
-    if(p->colour)
+    if(p->colour)//没有破坏性质
         return ;
-    if(p == root){
+    if(p == root){//根结点直接变色，不会影响
         p->colour = BLACK;
         return ;
     }
