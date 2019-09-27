@@ -1076,12 +1076,13 @@ class DisjointSet{
 private:
     int size;//数组的规模
     int *parent;
-    
+    int num;// 不相交元素的个数
 public:
     DisjointSet(int n);
     ~DisjointSet(){delete [] parent;}
     void Union(int root1, int root2);
     int Find(int x);
+    int Num();
 };
 
 DisjointSet::DisjointSet(int n){
@@ -1090,6 +1091,7 @@ DisjointSet::DisjointSet(int n){
     for(int i = 0; i < size;i++){
         parent[i] = -1;//所有的都是规模为1的根节点
     }
+    num = n;
 }
 
 int DisjointSet::Find(int x){
@@ -1100,6 +1102,8 @@ int DisjointSet::Find(int x){
 }
 
 void DisjointSet::Union(int root1, int root2){
+    root1 = Find(root1);
+    root2 = Find(root2);
     if(root1 == root2)
         return ;
     if(parent[root1] > parent[root2]){//root1规模比较小
@@ -1109,5 +1113,14 @@ void DisjointSet::Union(int root1, int root2){
         parent[root1] += parent[root2];//root2归并到root1上
         parent[root2] = root1;
     }
+    num --;
 }
+
+int DisjointSet::Num(){
+    for(int i = 0;i < size;i++){
+        std::cout << i << "\t" << parent[i] << std::endl;
+    }
+    return this->num;
+}
+
 #endif /* set_hpp */
